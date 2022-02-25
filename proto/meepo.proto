@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package meepo;
+
+option go_package = "github.com/erdongli/meepo/proto";
+
+// A block header contains metadata about the block
+message BlockHeader {
+  // Block version number
+  int32 version = 1;
+
+  // The hash value of the previous block header
+  bytes prev_block = 2;
+
+  // A hash of all transactions included in the block
+  bytes merkle_root = 3;
+
+  // Unix epoch in seconds of when the block was created
+  uint32 timestamp = 4;
+
+  // The difficulty target being used for the block
+  uint32 bits = 5;
+
+  // The nonce used to generate the block
+  uint32 nonce = 6;
+}
