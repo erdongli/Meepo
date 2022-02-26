@@ -24,3 +24,9 @@ message BlockHeader {
   // The nonce used to generate the block
   uint32 nonce = 6;
 }
+
+// A block contains a block header and all the transactions associated with the block
+message Block {
+  // Block header
+  BlockHeader header = 1;
+}
