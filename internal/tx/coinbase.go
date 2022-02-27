@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"math"
 
-	pb "github.com/erdongli/meepo/proto"
+	pb "github.com/erdongli/pbchain/proto"
 )
 
 // NewCoinbase creates a new coinbase transaction.

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/erdongli/meepo/internal/pow"
+	"github.com/erdongli/pbchain/internal/pow"
 )
 
 func TestValidate(t *testing.T) {

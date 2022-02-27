@@ -4,7 +4,7 @@ import (
 	"log"
 	"math/big"
 
-	"github.com/erdongli/meepo/internal/chain"
+	"github.com/erdongli/pbchain/internal/chain"
 )
 
 func main() {

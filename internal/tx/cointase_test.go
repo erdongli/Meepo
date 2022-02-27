@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/erdongli/meepo/internal/tx"
-	pb "github.com/erdongli/meepo/proto"
+	"github.com/erdongli/pbchain/internal/tx"
+	pb "github.com/erdongli/pbchain/proto"
 )
 
 func TestIncrExtraNonce(t *testing.T) {

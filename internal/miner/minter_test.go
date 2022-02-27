@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/erdongli/meepo/internal/miner"
-	pb "github.com/erdongli/meepo/proto"
+	"github.com/erdongli/pbchain/internal/miner"
+	pb "github.com/erdongli/pbchain/proto"
 	"google.golang.org/protobuf/proto"
 )
 

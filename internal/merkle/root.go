@@ -1,7 +1,7 @@
 package merkle
 
 import (
-	"github.com/erdongli/meepo/internal/crypto"
+	"github.com/erdongli/pbchain/internal/crypto"
 )
 
 // ComputeRoot computes the Merkle root in a bottom-up approach, by calculating the sub-roots via

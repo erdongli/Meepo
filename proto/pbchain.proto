@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package meepo;
+package pbchain;
 
-option go_package = "github.com/erdongli/meepo/proto";
+option go_package = "github.com/erdongli/pbchain/proto";
 
 // A block header contains metadata about the block
 message BlockHeader {

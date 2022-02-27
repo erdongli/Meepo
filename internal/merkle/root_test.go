@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/erdongli/meepo/internal/merkle"
+	"github.com/erdongli/pbchain/internal/merkle"
 )
 
 func TestComputeRoot(t *testing.T) {

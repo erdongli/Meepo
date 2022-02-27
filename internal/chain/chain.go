@@ -3,10 +3,10 @@ package chain
 import (
 	"fmt"
 
-	"github.com/erdongli/meepo/internal/crypto"
-	"github.com/erdongli/meepo/internal/merkle"
-	"github.com/erdongli/meepo/internal/miner"
-	pb "github.com/erdongli/meepo/proto"
+	"github.com/erdongli/pbchain/internal/crypto"
+	"github.com/erdongli/pbchain/internal/merkle"
+	"github.com/erdongli/pbchain/internal/miner"
+	pb "github.com/erdongli/pbchain/proto"
 	"google.golang.org/protobuf/proto"
 )
 

@@ -3,9 +3,9 @@ package miner
 import (
 	"time"
 
-	"github.com/erdongli/meepo/internal/crypto"
-	"github.com/erdongli/meepo/internal/pow"
-	pb "github.com/erdongli/meepo/proto"
+	"github.com/erdongli/pbchain/internal/crypto"
+	"github.com/erdongli/pbchain/internal/pow"
+	pb "github.com/erdongli/pbchain/proto"
 	"google.golang.org/protobuf/proto"
 )
 

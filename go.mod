@@ -1,4 +1,4 @@
-module github.com/erdongli/meepo
+module github.com/erdongli/pbchain
 
 go 1.17
 

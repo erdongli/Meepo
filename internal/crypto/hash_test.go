@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/erdongli/meepo/internal/crypto"
+	"github.com/erdongli/pbchain/internal/crypto"
 )
 
 func TestHash256(t *testing.T) {
