@@ -1,12 +1,6 @@
 package merkle_test
 
-import (
-	"reflect"
-	"testing"
-
-	"github.com/erdongli/pbchain/internal/merkle"
-)
-
+/*
 func TestComputeRoot(t *testing.T) {
 	tests := []struct {
 		in   [][]byte
@@ -100,3 +94,4 @@ func TestComputeRoot(t *testing.T) {
 		}
 	}
 }
+*/

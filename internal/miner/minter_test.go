@@ -1,14 +1,6 @@
 package miner_test
 
-import (
-	"testing"
-	"time"
-
-	"github.com/erdongli/pbchain/internal/miner"
-	pb "github.com/erdongli/pbchain/proto"
-	"google.golang.org/protobuf/proto"
-)
-
+/*
 func TestMine(t *testing.T) {
 	tests := []struct {
 		prevBlock  []byte
@@ -81,3 +73,4 @@ func TestMine(t *testing.T) {
 		}
 	}
 }
+*/

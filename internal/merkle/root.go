@@ -2,6 +2,8 @@ package merkle
 
 import (
 	"github.com/erdongli/pbchain/internal/crypto"
+	pb "github.com/erdongli/pbchain/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // ComputeRoot computes the Merkle root in a bottom-up approach, by calculating the sub-roots via
@@ -11,14 +13,18 @@ import (
 // If the number of nodes at a given level is odd, the last one is duplicated before computing the next level.
 //
 // This implementation is susceptible to CVE-2012-2469.
-func ComputeRoot(data [][]byte) []byte {
-	if len(data) == 0 {
-		return make([]byte, 32)
+func ComputeRoot(txs []*pb.Transaction) ([]byte, error) {
+	if len(txs) == 0 {
+		return make([]byte, 32), nil
 	}
 
-	hashes := make([][]byte, len(data))
-	for i, d := range data {
-		hashes[i] = crypto.Hash256(d)
+	hashes := make([][]byte, len(txs))
+	for i, tx := range txs {
+		txBytes, err := proto.Marshal(tx)
+		if err != nil {
+			return nil, err
+		}
+		hashes[i] = crypto.Hash256(txBytes)
 	}
 
 	for len(hashes) > 1 {
@@ -32,5 +38,5 @@ func ComputeRoot(data [][]byte) []byte {
 		hashes = hashes[:len(hashes)/2]
 	}
 
-	return hashes[0]
+	return hashes[0], nil
 }

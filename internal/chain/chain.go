@@ -3,11 +3,8 @@ package chain
 import (
 	"fmt"
 
-	"github.com/erdongli/pbchain/internal/crypto"
-	"github.com/erdongli/pbchain/internal/merkle"
 	"github.com/erdongli/pbchain/internal/miner"
 	pb "github.com/erdongli/pbchain/proto"
-	"google.golang.org/protobuf/proto"
 )
 
 const bits = uint32(20)
@@ -23,18 +20,14 @@ func NewBlockChain() *BlockChain {
 }
 
 // Append is a naive method just so that the block chain can be assembled.
-func (bc *BlockChain) Append(data [][]byte) error {
-	prev := []byte{}
-	if len(bc.blocks) > 0 {
-		b, err := proto.Marshal(bc.blocks[len(bc.blocks)-1])
-		if err != nil {
-			return err
-		}
-		prev = crypto.Hash256(b)
+func (bc *BlockChain) Append(txs []*pb.Transaction) error {
+	height := len(bc.blocks)
+	var prev *pb.BlockHeader
+	if height > 0 {
+		prev = bc.blocks[height-1].Header
 	}
-	mrkl := merkle.ComputeRoot(data)
 
-	hdr, err := miner.Mine(prev, mrkl, bits)
+	hdr, err := miner.Mine(int64(height), prev, txs, bits)
 	if err != nil {
 		return err
 	}
