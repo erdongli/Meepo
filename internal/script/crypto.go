@@ -10,6 +10,18 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func fromPublicKey(pk *ecdsa.PublicKey) (*pb.Instruc, error) {
+	b, err := proto.Marshal(&pb.PublicKey{
+		X: pk.X.Bytes(),
+		Y: pk.Y.Bytes(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Instruc{Instruc: &pb.Instruc_Data{Data: b}}, nil
+}
+
 func toPublicKey(instruc *pb.Instruc) (*ecdsa.PublicKey, error) {
 	switch v := instruc.Instruc.(type) {
 	case *pb.Instruc_Data:
@@ -27,6 +39,18 @@ func toPublicKey(instruc *pb.Instruc) (*ecdsa.PublicKey, error) {
 	default:
 		return nil, fmt.Errorf("unexpected instruction type")
 	}
+}
+
+func fromSignature(r, s *big.Int) (*pb.Instruc, error) {
+	b, err := proto.Marshal(&pb.Signature{
+		R: r.Bytes(),
+		S: s.Bytes(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.Instruc{Instruc: &pb.Instruc_Data{Data: b}}, nil
 }
 
 func toSignature(instruc *pb.Instruc) (*big.Int, *big.Int, error) {
