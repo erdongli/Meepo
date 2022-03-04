@@ -83,125 +83,40 @@ message Instruc {
   }
 }
 
-// Script opcodes
+// Script opcodes used by P2PK and P2PKH
 enum Op {
-    option allow_alias = true;
+  // Push an empty array of bytes onto the stack
+  OP_0 = 0;
 
-    // Push value
-    OP_FALSE = 0;
-    OP_RESERVED = 80;
-    OP_TRUE = 81;
+  // Marks transaction as invalid if top stack value is false, and remove the top stack item
+  OP_VERIFY = 105;
 
-    // Control
-    OP_NOP = 97;
-    OP_VER = 98;
-    OP_IF = 99;
-    OP_NOTIF = 100;
-    OP_VERIF = 101;
-    OP_VERNOTIF = 102;
-    OP_ELSE = 103;
-    OP_ENDIF = 104;
-    OP_VERIFY = 105;
-    OP_RETURN = 106;
+  // Duplicate the top stack item
+  OP_DUP = 118;
 
-    // Stack ops
-    OP_TOALTSTACK = 107;
-    OP_FROMALTSTACK = 108;
-    OP_2DROP = 109;
-    OP_2DUP = 110;
-    OP_3DUP = 111;
-    OP_2OVER = 112;
-    OP_2ROT = 113;
-    OP_2SWAP = 114;
-    OP_IFDUP = 115;
-    OP_DEPTH = 116;
-    OP_DROP = 117;
-    OP_DUP = 118;
-    OP_NIP = 119;
-    OP_OVER = 120;
-    OP_PICK = 121;
-    OP_ROLL = 122;
-    OP_ROT = 123;
-    OP_SWAP = 124;
-    OP_TUCK = 125;
+  // Push 1 onto the stack if the top two items are exactly equal, 0 otherwise
+  OP_EQUAL = 135;
 
-    // Splice ops
-    OP_CAT = 126;
-    OP_SUBSTR = 127;
-    OP_LEFT = 128;
-    OP_RIGHT = 129;
-    OP_SIZE = 130;
+  // OP_EQUAL followed by an OP_VERIFY
+  OP_EQUALVERIFY = 136;
 
-    // Bit logic
-    OP_INVERT = 131;
-    OP_AND = 132;
-    OP_OR = 133;
-    OP_XOR = 134;
-    OP_EQUAL = 135;
-    OP_EQUALVERIFY = 136;
-    OP_RESERVED1 = 137;
-    OP_RESERVED2 = 138;
+  // RIPEMD-160(SHA-256(top stack item))
+  OP_HASH160 = 169;
 
-    // Numeric
-    OP_1ADD = 139;
-    OP_1SUB = 140;
-    OP_2MUL = 141;
-    OP_2DIV = 142;
-    OP_NEGATE = 143;
-    OP_ABS = 144;
-    OP_NOT = 145;
-    OP_0NOTEQUAL = 146;
+  // Check if the hash of the transaction matches with the signature
+  OP_CHECKSIG = 172;
+}
 
-    OP_ADD = 147;
-    OP_SUB = 148;
-    OP_MUL = 149;
-    OP_DIV = 150;
-    OP_MOD = 151;
-    OP_LSHIFT = 152;
-    OP_RSHIFT = 153;
+message PrivateKey {
+  bytes d = 1;
+}
 
-    OP_BOOLAND = 154;
-    OP_BOOLOR = 155;
-    OP_NUMEQUAL = 156;
-    OP_NUMEQUALVERIFY = 157;
-    OP_NUMNOTEQUAL = 158;
-    OP_LESSTHAN = 159;
-    OP_GREATERTHAN = 160;
-    OP_LESSTHANOREQUAL = 161;
-    OP_GREATERTHANOREQUAL = 162;
-    OP_MIN = 163;
-    OP_MAX = 164;
+message PublicKey {
+  bytes x = 1;
+  bytes y = 2;
+}
 
-    OP_WITHIN = 165;
-
-    // Crypto
-    OP_RIPEMD160 = 166;
-    OP_SHA1 = 167;
-    OP_SHA256 = 168;
-    OP_HASH160 = 169;
-    OP_HASH256 = 170;
-    OP_CODESEPARATOR = 171;
-    OP_CHECKSIG = 172;
-    OP_CHECKSIGVERIFY = 173;
-    OP_CHECKMULTISIG = 174;
-    OP_CHECKMULTISIGVERIFY = 175;
-
-    // Expansion
-    OP_NOP1 = 176;
-    OP_CHECKLOCKTIMEVERIFY = 177;
-    OP_NOP2 = 177; // Alias of OP_CHECKLOCKTIMEVERIFY
-    OP_CHECKSEQUENCEVERIFY = 178;
-    OP_NOP3 = 178; // Alias of OP_CHECKSEQUENCEVERIFY
-    OP_NOP4 = 179;
-    OP_NOP5 = 180;
-    OP_NOP6 = 181;
-    OP_NOP7 = 182;
-    OP_NOP8 = 183;
-    OP_NOP9 = 184;
-    OP_NOP10 = 185;
-
-    // Opcode added by BIP 342 (Tapscript)
-    OP_CHECKSIGADD = 186;
-
-    OP_INVALIDOPCODE = 255;
+message Signature {
+  bytes r = 1;
+  bytes s = 2;
 }

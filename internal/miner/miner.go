@@ -7,7 +7,7 @@ import (
 	"github.com/erdongli/pbchain/internal/crypto"
 	"github.com/erdongli/pbchain/internal/merkle"
 	"github.com/erdongli/pbchain/internal/pow"
-	"github.com/erdongli/pbchain/internal/tx"
+	"github.com/erdongli/pbchain/internal/transaction"
 	pb "github.com/erdongli/pbchain/proto"
 	"google.golang.org/protobuf/proto"
 )
@@ -29,7 +29,7 @@ func Mine(height int64, prevBlock *pb.BlockHeader, txs []*pb.Transaction, bits u
 
 	// Create a new slice of transactions with coinbase being the first element.
 	txsCb := make([]*pb.Transaction, len(txs)+1)
-	txsCb[0] = tx.NewCoinbase(height, 50)
+	txsCb[0] = transaction.NewCoinbase(height, 50)
 	copy(txsCb[1:], txs)
 
 	for {
@@ -68,7 +68,7 @@ func Mine(height int64, prevBlock *pb.BlockHeader, txs []*pb.Transaction, bits u
 		}
 
 		// Try to increment extra nonce.
-		if err := tx.IncrExtraNonce(txsCb[0]); err != nil {
+		if err := transaction.IncrExtraNonce(txsCb[0]); err != nil {
 			return nil, err
 		}
 	}

@@ -1,4 +1,4 @@
-package tx_test
+package transaction_test
 
 import (
 	"math"
