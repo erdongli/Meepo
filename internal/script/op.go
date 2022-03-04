@@ -44,10 +44,7 @@ func OpEqual(stack []*pb.Instruc) bool {
 }
 
 func OpEqualVerify(stack []*pb.Instruc) bool {
-	if OpEqual(stack) == false {
-		return false
-	}
-	return OpVerify(stack)
+	return OpEqual(stack) && OpVerify(stack)
 }
 
 func OpHash160(stack []*pb.Instruc) bool {
@@ -65,7 +62,7 @@ func OpHash160(stack []*pb.Instruc) bool {
 	return true
 }
 
-func OpCheckSig(stack, scriptPubkey []*pb.Instruc, tx *pb.Transaction, idx int) bool {
+func OpCheckSig(stack, scriptPubkey []*pb.Instruc, tx *pb.Transaction, txInIdx int) bool {
 	// Get public key and signature from stack
 	if len(stack) < 2 {
 		return false
@@ -84,7 +81,7 @@ func OpCheckSig(stack, scriptPubkey []*pb.Instruc, tx *pb.Transaction, idx int) 
 	txCpy := proto.Clone(tx).(*pb.Transaction)
 	for i, txIn := range txCpy.TxIns {
 		txIn.ScriptSig = nil
-		if i == idx {
+		if i == txInIdx {
 			// Set TxIns[txInIdx]'s script sig to the previous output's script pubkey
 			txIn.ScriptSig = scriptPubkey
 		}
