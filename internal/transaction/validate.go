@@ -5,10 +5,20 @@ import (
 	pb "github.com/erdongli/pbchain/proto"
 )
 
-func Validate(tx *pb.Transaction) bool {
+type Validator struct {
+	storage *Storage
+}
+
+func NewValidator() *Validator {
+	return &Validator{
+		storage: NewStorage(),
+	}
+}
+
+func (v *Validator) Validate(tx *pb.Transaction) bool {
 	for i, txIn := range tx.TxIns {
-		prevTx, err := Get(txIn.PrevOutput.Txid)
-		if err != nil {
+		prevTx, ok := v.storage.Get(txIn.PrevOutput.Txid)
+		if !ok {
 			return false
 		}
 		if int(txIn.PrevOutput.Index) >= len(prevTx.TxOuts) {
