@@ -9,9 +9,9 @@ type Validator struct {
 	storage *Storage
 }
 
-func NewValidator() *Validator {
+func NewValidator(s *Storage) *Validator {
 	return &Validator{
-		storage: NewStorage(),
+		storage: s,
 	}
 }
 
