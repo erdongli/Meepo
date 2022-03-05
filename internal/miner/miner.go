@@ -14,33 +14,40 @@ import (
 
 var TimeNow = time.Now
 
+type Miner struct {
+	pool      *transaction.Pool
+	validator *transaction.Validator
+}
+
+func NewMiner(pool *transaction.Pool, validator *transaction.Validator) *Miner {
+	return &Miner{
+		pool:      pool,
+		validator: validator,
+	}
+}
+
 // Mine takes the block height, the previous block header, transactions to validate, and the targit difficulty as its
 // input.
 // It returns a block header that fulfills the Proof-of-Work requirement, or an error.
-func Mine(height int64, prevBlock *pb.BlockHeader, txs []*pb.Transaction, bits uint32) (*pb.BlockHeader, error) {
-	prevBytes := []byte{}
-	if height != 0 {
-		var err error
-		prevBytes, err = proto.Marshal(prevBlock)
-		if err != nil {
-			return nil, err
+func (m *Miner) Mine(height int64, prevBlock []byte, bits uint32) (*pb.Block, error) {
+	tbv := m.pool.CheckOut() // Transactions to be validated
+	txs := make([]*pb.Transaction, 1, len(tbv)+1)
+	txs[0] = transaction.NewCoinbase(height, 50)
+	for _, tx := range tbv {
+		if m.validator.Validate(tx) {
+			txs = append(txs, tx)
 		}
 	}
 
-	// Create a new slice of transactions with coinbase being the first element.
-	txsCb := make([]*pb.Transaction, len(txs)+1)
-	txsCb[0] = transaction.NewCoinbase(height, 50)
-	copy(txsCb[1:], txs)
-
 	for {
-		merkleRoot, err := merkle.ComputeRoot(txsCb)
+		merkleRoot, err := merkle.ComputeRoot(txs)
 		if err != nil {
 			return nil, err
 		}
 
 		hdr := &pb.BlockHeader{
 			Version:    0,
-			PrevBlock:  crypto.Hash256(prevBytes),
+			PrevBlock:  prevBlock,
 			MerkleRoot: merkleRoot,
 			Timestamp:  uint32(TimeNow().Unix()),
 			Bits:       bits,
@@ -55,7 +62,10 @@ func Mine(height int64, prevBlock *pb.BlockHeader, txs []*pb.Transaction, bits u
 			}
 
 			if v.Validate(crypto.Hash256(b)) {
-				return hdr, nil
+				return &pb.Block{
+					Header: hdr,
+					Txs:    txs,
+				}, nil
 			}
 
 			// Break out upon integer overflow.
@@ -68,7 +78,7 @@ func Mine(height int64, prevBlock *pb.BlockHeader, txs []*pb.Transaction, bits u
 		}
 
 		// Try to increment extra nonce.
-		if err := transaction.IncrExtraNonce(txsCb[0]); err != nil {
+		if err := transaction.IncrExtraNonce(txs[0]); err != nil {
 			return nil, err
 		}
 	}

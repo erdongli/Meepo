@@ -6,12 +6,13 @@ import (
 	pb "github.com/erdongli/pbchain/proto"
 )
 
+// A pool of unvalidated transactions. For now assuming a single node in the block chain network.
 type Pool struct {
 	mutex sync.Mutex
 	txs   []*pb.Transaction
 }
 
-func NewPool(v *Validator) *Pool {
+func NewPool() *Pool {
 	return &Pool{
 		mutex: sync.Mutex{},
 		txs:   []*pb.Transaction{},
