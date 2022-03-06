@@ -1,6 +1,8 @@
 package transaction
 
 import (
+	"encoding/base64"
+	"fmt"
 	"sync"
 
 	pb "github.com/erdongli/pbchain/proto"
@@ -56,4 +58,22 @@ func (s *UTXOStorage) Update(block *pb.Block) {
 			s.utxos[id][uint32(i)] = txOut
 		}
 	}
+}
+
+func (s *UTXOStorage) String() string {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+
+	encode := func(in []byte) string {
+		return base64.RawURLEncoding.Strict().EncodeToString(in)
+	}
+
+	wallets := map[string]uint64{}
+	for _, outs := range s.utxos {
+		for _, out := range outs {
+			wallets[encode(out.ScriptPubkey[2].GetData())] += out.Amount
+		}
+	}
+
+	return fmt.Sprint(wallets)
 }

@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const bits = uint32(20)
+const bits = uint32(25)
 
 type Node struct {
 	bchain *chain.BlockChain
@@ -48,5 +48,6 @@ func (n *Node) Run() error {
 		n.bchain.Append(block)
 		n.uxtos.Update(block)
 		fmt.Printf("[%d] ts: %d, merkle root: %x\n", height, block.Header.Timestamp, block.Header.MerkleRoot)
+		fmt.Printf("UTXOs: %v\n", n.uxtos)
 	}
 }
