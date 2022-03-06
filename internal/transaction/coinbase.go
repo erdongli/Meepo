@@ -1,24 +1,39 @@
 package transaction
 
 import (
+	"crypto/ecdsa"
 	"fmt"
 	"math"
 
+	"github.com/erdongli/pbchain/internal/script"
 	pb "github.com/erdongli/pbchain/proto"
 )
 
 // NewCoinbase creates a new coinbase transaction.
 // A coinbase transaction contains a single input, whose previous output is set to nil, and script sig
 // set to [<block height>, <extra nonce>].
-func NewCoinbase(height int64, amount uint64) *pb.Transaction {
+func NewCoinbase(height int64, amount uint64, pk *ecdsa.PublicKey) (*pb.Transaction, error) {
+	script, err := script.P2PKH(pk)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.Transaction{
 		Version: 0,
-		TxIns: []*pb.TxIn{{ScriptSig: []*pb.Instruc{
-			{Instruc: &pb.Instruc_Number{Number: height}},
-			{Instruc: &pb.Instruc_Number{Number: 0}},
-		}}},
-		TxOuts: []*pb.TxOut{{Amount: amount}},
-	}
+		TxIns: []*pb.TxIn{
+			{
+				ScriptSig: []*pb.Instruc{
+					{Instruc: &pb.Instruc_Number{Number: height}},
+					{Instruc: &pb.Instruc_Number{Number: 0}},
+				},
+			},
+		},
+		TxOuts: []*pb.TxOut{
+			{
+				Amount:       amount,
+				ScriptPubkey: script,
+			},
+		},
+	}, nil
 }
 
 // IncreExtraNonce increments coinbase's extra nonce.

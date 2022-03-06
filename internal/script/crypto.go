@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/erdongli/pbchain/internal/crypto"
 	pb "github.com/erdongli/pbchain/proto"
 	"google.golang.org/protobuf/proto"
 )
 
-func fromPublicKey(pk *ecdsa.PublicKey) (*pb.Instruc, error) {
+func pubKeyToInstrucHash160(pk *ecdsa.PublicKey) (*pb.Instruc, error) {
 	b, err := proto.Marshal(&pb.PublicKey{
 		X: pk.X.Bytes(),
 		Y: pk.Y.Bytes(),
@@ -18,11 +19,10 @@ func fromPublicKey(pk *ecdsa.PublicKey) (*pb.Instruc, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	return &pb.Instruc{Instruc: &pb.Instruc_Data{Data: b}}, nil
+	return &pb.Instruc{Instruc: &pb.Instruc_Data{Data: crypto.Hash160(b)}}, nil
 }
 
-func toPublicKey(instruc *pb.Instruc) (*ecdsa.PublicKey, error) {
+func instrucToPubKey(instruc *pb.Instruc) (*ecdsa.PublicKey, error) {
 	switch v := instruc.Instruc.(type) {
 	case *pb.Instruc_Data:
 		var pk *pb.PublicKey
@@ -41,7 +41,7 @@ func toPublicKey(instruc *pb.Instruc) (*ecdsa.PublicKey, error) {
 	}
 }
 
-func fromSignature(r, s *big.Int) (*pb.Instruc, error) {
+func sigToInstruc(r, s *big.Int) (*pb.Instruc, error) {
 	b, err := proto.Marshal(&pb.Signature{
 		R: r.Bytes(),
 		S: s.Bytes(),
@@ -53,7 +53,7 @@ func fromSignature(r, s *big.Int) (*pb.Instruc, error) {
 	return &pb.Instruc{Instruc: &pb.Instruc_Data{Data: b}}, nil
 }
 
-func toSignature(instruc *pb.Instruc) (*big.Int, *big.Int, error) {
+func instrucToSig(instruc *pb.Instruc) (*big.Int, *big.Int, error) {
 	switch v := instruc.Instruc.(type) {
 	case *pb.Instruc_Data:
 		var sig *pb.Signature

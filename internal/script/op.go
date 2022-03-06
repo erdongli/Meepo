@@ -67,11 +67,11 @@ func OpCheckSig(stack, scriptPubkey []*pb.Instruc, tx *pb.Transaction, txInIdx i
 	if len(stack) < 2 {
 		return false
 	}
-	pk, err := toPublicKey(stack[len(stack)-1])
+	pk, err := instrucToPubKey(stack[len(stack)-1])
 	if err != nil {
 		return false
 	}
-	r, s, err := toSignature(stack[len(stack)-2])
+	r, s, err := instrucToSig(stack[len(stack)-2])
 	if err != nil {
 		return false
 	}

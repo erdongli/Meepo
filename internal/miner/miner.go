@@ -1,6 +1,9 @@
 package miner
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
 	"math"
 	"time"
 
@@ -17,13 +20,19 @@ var TimeNow = time.Now
 type Miner struct {
 	pool      *transaction.Pool
 	validator *transaction.Validator
+	privKey   *ecdsa.PrivateKey
 }
 
-func NewMiner(pool *transaction.Pool, validator *transaction.Validator) *Miner {
+func NewMiner(pool *transaction.Pool, validator *transaction.Validator) (*Miner, error) {
+	privKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		return nil, err
+	}
 	return &Miner{
 		pool:      pool,
 		validator: validator,
-	}
+		privKey:   privKey,
+	}, nil
 }
 
 // Mine takes the block height, the previous block header, transactions to validate, and the targit difficulty as its
@@ -32,7 +41,13 @@ func NewMiner(pool *transaction.Pool, validator *transaction.Validator) *Miner {
 func (m *Miner) Mine(height int64, prevBlock []byte, bits uint32) (*pb.Block, error) {
 	tbv := m.pool.CheckOut() // Transactions to be validated
 	txs := make([]*pb.Transaction, 1, len(tbv)+1)
-	txs[0] = transaction.NewCoinbase(height, 50)
+
+	var err error
+	txs[0], err = transaction.NewCoinbase(height, 50, &m.privKey.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+
 	for _, tx := range tbv {
 		if m.validator.Validate(tx) {
 			txs = append(txs, tx)
