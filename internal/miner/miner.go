@@ -48,11 +48,14 @@ func (m *Miner) Mine(height int64, prevBlock [32]byte, bits uint32) (*pb.Block, 
 		return nil, err
 	}
 
+	fee := uint64(0)
 	for _, tx := range tbv {
-		if m.validator.Validate(tx) {
+		if f, ok := m.validator.Validate(tx); ok {
 			txs = append(txs, tx)
+			fee += f
 		}
 	}
+	txs[0].TxOuts[0].Amount += fee
 
 	for {
 		merkleRoot, err := merkle.ComputeRoot(txs)

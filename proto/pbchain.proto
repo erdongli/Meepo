@@ -4,6 +4,18 @@ package pbchain;
 
 option go_package = "github.com/erdongli/pbchain/proto";
 
+service Node {
+  rpc NewTx(NewTxRequest) returns (NewTxResponse);
+}
+
+message NewTxRequest {
+  Transaction tx = 1;
+}
+
+message NewTxResponse {
+  // empty
+}
+
 // A block header contains metadata about the block
 message BlockHeader {
   // Block version number

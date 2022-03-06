@@ -1,27 +1,33 @@
 package node
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/erdongli/pbchain/internal/chain"
 	"github.com/erdongli/pbchain/internal/crypto"
 	"github.com/erdongli/pbchain/internal/miner"
 	"github.com/erdongli/pbchain/internal/transaction"
+	pb "github.com/erdongli/pbchain/proto"
 	"google.golang.org/protobuf/proto"
 )
 
 const bits = uint32(25)
 
 type Node struct {
+	pb.UnimplementedNodeServer
+
 	bchain *chain.BlockChain
 	miner  *miner.Miner
+	pool   *transaction.Pool
 	uxtos  *transaction.UTXOStorage
 }
 
-func NewNode(bchain *chain.BlockChain, miner *miner.Miner, uxtos *transaction.UTXOStorage) *Node {
+func NewNode(bchain *chain.BlockChain, miner *miner.Miner, pool *transaction.Pool, uxtos *transaction.UTXOStorage) *Node {
 	return &Node{
 		bchain: bchain,
 		miner:  miner,
+		pool:   pool,
 		uxtos:  uxtos,
 	}
 }
@@ -50,4 +56,9 @@ func (n *Node) Run() error {
 		fmt.Printf("[%d] ts: %d, merkle root: %x\n", height, block.Header.Timestamp, block.Header.MerkleRoot)
 		fmt.Printf("UTXOs: %v\n", n.uxtos)
 	}
+}
+
+func (n *Node) NewTx(_ context.Context, req *pb.NewTxRequest) (*pb.NewTxResponse, error) {
+	n.pool.CheckIn(req.Tx)
+	return &pb.NewTxResponse{}, nil
 }
