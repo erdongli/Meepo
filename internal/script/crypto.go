@@ -19,7 +19,8 @@ func pubKeyToInstrucHash160(pk *ecdsa.PublicKey) (*pb.Instruc, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &pb.Instruc{Instruc: &pb.Instruc_Data{Data: crypto.Hash160(b)}}, nil
+	h := crypto.Hash160(b)
+	return &pb.Instruc{Instruc: &pb.Instruc_Data{Data: h[:]}}, nil
 }
 
 func instrucToPubKey(instruc *pb.Instruc) (*ecdsa.PublicKey, error) {

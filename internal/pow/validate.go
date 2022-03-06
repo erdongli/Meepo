@@ -19,8 +19,8 @@ func NewValidator(bits uint32) *Validator {
 }
 
 // Validate checks if hash fulfills the target.
-func (v *Validator) Validate(hash []byte) bool {
+func (v *Validator) Validate(hash [32]byte) bool {
 	actual := new(big.Int)
-	actual.SetBytes(hash)
+	actual.SetBytes(hash[:])
 	return actual.Cmp(v.target) != 1
 }

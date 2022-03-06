@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	storage := transaction.NewStorage()
-	validator := transaction.NewValidator(storage)
+	utxos := transaction.NewUTXOStorage()
+	validator := transaction.NewValidator(utxos)
 	pool := transaction.NewPool()
 	miner, err := miner.NewMiner(pool, validator)
 	if err != nil {
@@ -19,6 +19,6 @@ func main() {
 	}
 
 	bchain := chain.NewBlockChain()
-	node := node.NewNode(bchain, miner)
+	node := node.NewNode(bchain, miner, utxos)
 	log.Fatalf("failed to run node: %v", node.Run())
 }

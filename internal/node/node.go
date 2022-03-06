@@ -6,6 +6,7 @@ import (
 	"github.com/erdongli/pbchain/internal/chain"
 	"github.com/erdongli/pbchain/internal/crypto"
 	"github.com/erdongli/pbchain/internal/miner"
+	"github.com/erdongli/pbchain/internal/transaction"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -14,12 +15,14 @@ const bits = uint32(20)
 type Node struct {
 	bchain *chain.BlockChain
 	miner  *miner.Miner
+	uxtos  *transaction.UTXOStorage
 }
 
-func NewNode(bchain *chain.BlockChain, miner *miner.Miner) *Node {
+func NewNode(bchain *chain.BlockChain, miner *miner.Miner, uxtos *transaction.UTXOStorage) *Node {
 	return &Node{
 		bchain: bchain,
 		miner:  miner,
+		uxtos:  uxtos,
 	}
 }
 
@@ -27,22 +30,23 @@ func NewNode(bchain *chain.BlockChain, miner *miner.Miner) *Node {
 func (n *Node) Run() error {
 	for {
 		height := n.bchain.Height()
-		lastBytes := []byte{}
-		if last := n.bchain.GetLast(); last != nil {
+		prevBlock := [32]byte{}
+		if prev := n.bchain.GetLast(); prev != nil {
 			var err error
-			lastBytes, err = proto.Marshal(last.Header)
+			b, err := proto.Marshal(prev.Header)
 			if err != nil {
 				return err
 			}
-			lastBytes = crypto.Hash256(lastBytes)
+			prevBlock = crypto.Hash256(b)
 		}
 
-		block, err := n.miner.Mine(height, lastBytes, bits)
+		block, err := n.miner.Mine(height, prevBlock, bits)
 		if err != nil {
 			return err
 		}
 
 		n.bchain.Append(block)
+		n.uxtos.Update(block)
 		fmt.Printf("[%d] ts: %d, merkle root: %x\n", height, block.Header.Timestamp, block.Header.MerkleRoot)
 	}
 }

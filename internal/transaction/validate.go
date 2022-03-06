@@ -6,25 +6,25 @@ import (
 )
 
 type Validator struct {
-	storage *Storage
+	utxos *UTXOStorage
 }
 
-func NewValidator(s *Storage) *Validator {
+func NewValidator(utxos *UTXOStorage) *Validator {
 	return &Validator{
-		storage: s,
+		utxos: utxos,
 	}
 }
 
 func (v *Validator) Validate(tx *pb.Transaction) bool {
 	for i, txIn := range tx.TxIns {
-		prevTx, ok := v.storage.Get(txIn.PrevOutput.Txid)
+		id := txIn.PrevOutput.Txid
+		if len(id) != 32 {
+			return false
+		}
+		txOut, ok := v.utxos.Get(*(*[32]byte)(id), txIn.PrevOutput.Index)
 		if !ok {
 			return false
 		}
-		if int(txIn.PrevOutput.Index) >= len(prevTx.TxOuts) {
-			return false
-		}
-		txOut := prevTx.TxOuts[txIn.PrevOutput.Index]
 		if !script.ValidateTxIn(tx, txOut, i) {
 			return false
 		}

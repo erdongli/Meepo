@@ -38,7 +38,7 @@ func NewMiner(pool *transaction.Pool, validator *transaction.Validator) (*Miner,
 // Mine takes the block height, the previous block header, transactions to validate, and the targit difficulty as its
 // input.
 // It returns a block header that fulfills the Proof-of-Work requirement, or an error.
-func (m *Miner) Mine(height int64, prevBlock []byte, bits uint32) (*pb.Block, error) {
+func (m *Miner) Mine(height int64, prevBlock [32]byte, bits uint32) (*pb.Block, error) {
 	tbv := m.pool.CheckOut() // Transactions to be validated
 	txs := make([]*pb.Transaction, 1, len(tbv)+1)
 
@@ -62,8 +62,8 @@ func (m *Miner) Mine(height int64, prevBlock []byte, bits uint32) (*pb.Block, er
 
 		hdr := &pb.BlockHeader{
 			Version:    0,
-			PrevBlock:  prevBlock,
-			MerkleRoot: merkleRoot,
+			PrevBlock:  prevBlock[:],
+			MerkleRoot: merkleRoot[:],
 			Timestamp:  uint32(TimeNow().Unix()),
 			Bits:       bits,
 			Nonce:      0,

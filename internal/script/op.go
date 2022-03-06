@@ -57,8 +57,8 @@ func OpHash160(stack []*pb.Instruc) bool {
 	if !ok {
 		return false
 	}
-	hash := crypto.Hash160(data.Data)
-	stack = append(stack, &pb.Instruc{Instruc: &pb.Instruc_Data{Data: hash}})
+	h := crypto.Hash160(data.Data)
+	stack = append(stack, &pb.Instruc{Instruc: &pb.Instruc_Data{Data: h[:]}})
 	return true
 }
 
@@ -93,5 +93,6 @@ func OpCheckSig(stack, scriptPubkey []*pb.Instruc, tx *pb.Transaction, txInIdx i
 		return false
 	}
 
-	return ecdsa.Verify(pk, crypto.Hash256(b), r, s)
+	h := crypto.Hash256(b)
+	return ecdsa.Verify(pk, h[:], r, s)
 }
